@@ -9,3 +9,10 @@ Route::get('/', function () {
 });
 
 Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::get('/antrian', function() {
+    return view('antrian.index');
+});
+
+Route::get('/pendaftaran-pasien', function() {
+    return view('pendaftaran-pasien.index');
+});
