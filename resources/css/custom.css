@@ -1,0 +1,159 @@
+.heading-antrian {
+    font-weight: bold;
+    color: #006A4E;
+    margin-top: 1.5rem;
+    margin-bottom: 30px;
+}
+
+.box-antrian {
+    background-color: #F8F8F8;
+    padding: 60px;
+    border-radius: 20px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.box-antrian-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.box-antrian-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex-grow: 1;
+}
+
+.box-antrian-header-right {
+    flex-shrink: 0;
+}
+
+.btn-tambah-pasien {
+    border: none;
+    background-color: #00426B;
+    color: white;
+    width: 160px;
+    height: 50px;
+    border-radius: 6px;
+    transition: 0.3s;
+    margin-right: 40px;
+}
+.btn-tambah-pasien:hover {
+    background-color: #003454;
+    transform: translateY(-2px);
+}
+
+.form-pencarian {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.input-cari {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+.input-cari.nama { width: 180px; }
+.input-cari.nomor { width: 200px; }
+.input-cari.status { width: 150px; }
+
+.btn-cari {
+    border: none;
+    background-color: #418FC0;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+.btn-cari:hover {
+    background-color: #2e6fa3;
+    transform: translateY(-2px);
+}
+
+.btn-export {
+    border: none;
+    background-color: #418FC0;
+    color: white;
+    width: 130px;
+    height: 50px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+.btn-export:hover {
+    background-color: #2e6fa3;
+    transform: translateY(-2px);
+}
+
+.thead-custom {
+    background-color: #EBF2FF;
+    font-weight: bold;
+}
+
+.status-badge {
+    color: white;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+.status-calling {
+    background-color: #418FC0;
+}
+.status-waiting {
+    background-color: #A1A8AA;
+}
+.status-complete {
+    background-color: #28a745;
+}
+.status-default {
+    background-color: #888;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+
+/* === BUTTON UTAMA === */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+/* === VARIAN WARNA === */
+.btn.primary { background-color: #00426B; }
+.btn.primary:hover { background-color: #003454; }
+
+.btn.success { background-color: #006A4E; }
+.btn.success:hover { background-color: #004f3a; }
+
+.btn.warning { background-color: #7A5B00; }
+.btn.warning:hover { background-color: #5c4700; }
+
+.btn.danger { background-color: #6B0600; }
+.btn.danger:hover { background-color: #520400; }
+
+.btn.info { background-color: #418FC0; }
+.btn.info:hover { background-color: #2e6fa3; }
