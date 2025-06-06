@@ -41,6 +41,7 @@ return new class extends Migration
             $table->string('nama_kontak_darurat')->nullable();
             $table->string('telepon_kontak_darurat')->nullable();
             $table->string('hubungan_kontak_darurat')->nullable();
+            $table->string('gejala_awal');
             $table->timestamps();
         });
     }

@@ -33,6 +33,7 @@ class Patiens extends Model
         'nama_kontak_darurat',
         'telepon_kontak_darurat',
         'hubungan_kontak_darurat',
+        'gejala_awal',
         'mr_number',
     ];
 
@@ -43,5 +44,6 @@ class Patiens extends Model
     {
         return $this->hasMany(Users::class);
     }
-    
+
+
 }

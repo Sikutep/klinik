@@ -1,1897 +1,590 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="id">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>@yield('title', 'Dashboard')</title>
-  <link rel="shortcut icon" type="image/png" href="{{ asset('assets/images/logos/favicon.png') }}" />
-  <link rel="stylesheet" href="{{ asset('assets/css/styles.min.css') }}" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Pasien</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- SweetAlert2 CSS & JS (via CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+
+    <style>
+        body {
+            background-color: #EBF2FF;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .sidebar {
+            min-width: 150px;
+            max-width: 280px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar .nav-link {
+            color: #495057;
+            font-size: 13px;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #006a4e;
+            color: #f8f8f8;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #006a4e;
+            color: #f8f8f8;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+            padding: 1rem;
+        }
+
+        .content-wrapper {
+            flex: 1;
+        }
+
+        .table thead th {
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #006a4e;
+            color: #fff;
+            border-radius: 10px;
+        }
+
+        .dropdown-menu .dropdown-item i {
+            width: 20px;
+        }
+
+        .heading-antrian {
+            font-weight: bold;
+            color: #006A4E;
+            margin-bottom: 30px;
+            margin-top: 1rem;
+        }
+
+        .box-antrian {
+            background-color: #F8F8F8;
+            padding: 60px;
+            border-radius: 20px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .box-antrian-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-tambah-pasien {
+            display: inline-block;
+            text-align: center;
+            text-decoration: none;
+            line-height: 50px;
+            border: none;
+            background-color: #00426B;
+            color: white;
+            width: 160px;
+            height: 50px;
+            border-radius: 6px;
+            transition: 0.3s;
+            margin-right: 40px;
+            cursor: pointer;
+        }
+
+        .btn-tambah-pasien:hover {
+            background-color: #003454;
+            transform: translateY(-2px);
+        }
+
+        .form-pencarian {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        .input-pencarian {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .input-pencarian.nama {
+            width: 180px;
+        }
+
+        .input-pencarian.nomor-antrian {
+            width: 200px;
+        }
+
+        .select-pencarian {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            width: 150px;
+        }
+
+        .btn-cari {
+            border: none;
+            background-color: #418FC0;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-cari:hover {
+            background-color: #2e6fa3;
+            transform: translateY(-2px);
+        }
+
+        .btn-export-excel {
+            border: none;
+            background-color: #418FC0;
+            color: white;
+            width: 130px;
+            height: 50px;
+            border-radius: 6px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-export-excel:hover {
+            background-color: #2e6fa3;
+            transform: translateY(-2px);
+        }
+
+        .status-badge {
+            color: white;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .action-buttons button {
+            border: none;
+            border-radius: 8px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .action-buttons .btn-view {
+            background-color: #7A5C00;
+        }
+
+        .action-buttons .btn-view:hover {
+            background-color: #5c4700;
+            transform: scale(1.05);
+        }
+
+        .action-buttons .btn-edit {
+            background-color: #006A4E;
+        }
+
+        .action-buttons .btn-edit:hover {
+            background-color: #004f3a;
+            transform: scale(1.05);
+        }
+
+        .action-buttons .btn-delete {
+            background-color: #7B0000;
+        }
+
+        .action-buttons .btn-delete:hover {
+            background-color: #5a0000;
+            transform: scale(1.05);
+        }
+
+        .pagination-wrapper {
+            text-align: right;
+        }
+
+        .table thead td {
+            background-color: #EBF2FF;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        .table-container {
+            width: auto;
+            overflow-x: auto;
+        }
+
+        /* ========= RESPONSIVE STYLES ========= */
+        @media (max-width: 768px) {
+            .sidebar {
+                min-width: 80px;
+                max-width: 80px;
+                padding: 1rem;
+                align-items: center;
+            }
+
+            .sidebar .nav-link {
+                text-align: center;
+                font-size: 0;
+                padding: 0.75rem 0;
+            }
+
+            .sidebar .nav-link i {
+                font-size: 18px;
+                margin: 5px;
+            }
+
+            .sidebar .nav-link span,
+            .sidebar .nav-link div {
+                display: none !important;
+            }
+
+            .sidebar .fs-4 {
+                font-size: 0;
+            }
+
+            .main-content {
+                margin-left: 80px;
+                padding: 1rem;
+            }
+
+            .box-antrian {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .box-antrian-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .form-pencarian {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .form-pencarian input,
+            .form-pencarian select,
+            .form-pencarian .btn-cari {
+                width: 100% !important;
+            }
+
+            .btn-tambah-pasien,
+            .btn-export-excel {
+                width: 100%;
+                margin-right: 0;
+            }
+
+            .pagination-wrapper {
+                text-align: center;
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .input-pencarian.nama,
+            .input-pencarian.nomor-antrian,
+            .select-pencarian {
+                width: 100%;
+            }
+
+            .btn-cari {
+                width: 100%;
+            }
+
+            .action-buttons {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .action-buttons button {
+                width: 36px;
+                height: 36px;
+                margin: 2px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+
+            header .dropdown .btn {
+                min-width: unset;
+                width: auto;
+                padding: 8px 12px;
+            }
+
+            header .dropdown .btn img {
+                width: 36px;
+                height: 36px;
+            }
+
+            header .dropdown .btn .text-start {
+                margin-left: 8px;
+            }
+
+            header .dropdown .btn .text-start div:first-child {
+                font-size: 13px;
+                font-weight: 600;
+            }
+
+            header .dropdown .btn .text-start div:last-child {
+                font-size: 11px;
+                color: gray;
+            }
+
+            header .dropdown-menu {
+                right: 0 !important;
+                left: auto !important;
+            }
+        }
+    </style>
+
 </head>
 
-<style>
- /* 1) Make sure the header stays full-height and fixed */
-#main-wrapper .app-header {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0;
-  right: 0;
-  height: 65px;           /* whatever your header’s real height is */
-  z-index: 999;
-}
+<body class="d-flex">
+    <!-- Sidebar -->
+    <nav class="sidebar bg-light d-flex flex-column p-3 vh-100">
+        <a href="#" class="d-flex justify-content-center align-items-center text-decoration-none"
+            style="margin-top: 80px; margin-bottom: 60px">
+            <span class="fs-4 fw-bold">Logo</span>
+        </a>
 
-/* 2) Shift the entire body‐wrapper down by the header height */
-#main-wrapper .body-wrapper {
-  margin-top: 65px !important;  /* same value as header height */
-}
-
-/* 3) Remove Flexy’s huge padding-top in the content container */
-.body-wrapper .container-fluid,
-.body-wrapper .container-sm,
-.body-wrapper .container-md,
-.body-wrapper .container-lg,
-.body-wrapper .container-xl,
-.body-wrapper .container-xxl {
-  padding-top: 0 !important;
-}
-
-/* 4) Restore sidebar to top of header, not under it */
-#main-wrapper[data-sidebar-position=fixed] .left-sidebar {
-  top: 65px !important;         /* same header height */
-}
-
-
-
-</style>
-
-<body>
-  <!--  Body Wrapper -->
-  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-    data-sidebar-position="fixed" data-header-position="fixed">
-
-    <!-- Sidebar Start -->
-    <aside class="left-sidebar">
-      <!-- Sidebar scroll-->
-      <div>
-        <div class="brand-logo d-flex align-items-center justify-content-between">
-          <a href="#" class="text-nowrap logo-img">
-            <img src="{{ asset('assets/images/logos/logo.svg') }}" alt="" />
-          </a>
-          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
-            <i class="ti ti-x fs-6"></i>
-          </div>
-        </div>
-        <!-- Sidebar navigation-->
-        <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
-          <ul id="sidebarnav">
-            <li class="nav-small-cap">
-              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">Home</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./index.html" aria-expanded="false">
-                <i class="ti ti-atom"></i>
-                <span class="hide-menu">Dashboard</span>
-              </a>
-            </li>
-            <!-- ---------------------------------- -->
-            <!-- Dashboard -->
-            <!-- ---------------------------------- -->
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-aperture"></i>
-                  </span>
-                  <span class="hide-menu">Analytical</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-shopping-cart"></i>
-                  </span>
-                  <span class="hide-menu">eCommerce</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-layout-grid"></i>
-                  </span>
-                  <span class="hide-menu">Front Pages</span>
-                </div>
-
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Homepage</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">About Us</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Blog</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Blog Details</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Contact Us</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Portfolio</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Pricing</span>
-                    </div>
-
-                  </a>
-                </li>
-              </ul>
-            </li>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <a href="#" class="nav-link mb-2 {{ request()->is('dashboard') ? 'active' : '' }}"
+                style="font-size: 16px; font-weight: bold">
+                <i class="fa-solid fa-chart-area me-2"></i>
+                <span>Dashboard</span>
+            </a>
 
             <li>
-              <span class="sidebar-divider lg"></span>
-            </li>
-            <li class="nav-small-cap">
-              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">Apps</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-basket"></i>
-                  </span>
-                  <span class="hide-menu">Ecommerce</span>
-                </div>
-
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Shop</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Details</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">List</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Checkout</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Add Product</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Edit Product</span>
-                    </div>
-
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-chart-donut-3"></i>
-                  </span>
-                  <span class="hide-menu">Blog</span>
-                </div>
-
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Blog Posts</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Blog Details</span>
-                    </div>
-
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-user-circle"></i>
-                  </span>
-                  <span class="hide-menu">User Profile</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-mail"></i>
-                  </span>
-                  <span class="hide-menu">Email</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-calendar"></i>
-                  </span>
-                  <span class="hide-menu">Calendar</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-layout-kanban"></i>
-                  </span>
-                  <span class="hide-menu">Kanban</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-message-dots"></i>
-                  </span>
-                  <span class="hide-menu">Chat</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-notes"></i>
-                  </span>
-                  <span class="hide-menu">Notes</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-phone"></i>
-                  </span>
-                  <span class="hide-menu">Contact Table</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-list-details"></i>
-                  </span>
-                  <span class="hide-menu">Contact List</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-file-text"></i>
-                  </span>
-                  <span class="hide-menu">Invoice</span>
-                </div>
-
-              </a>
-            </li>
-
-            <li>
-              <span class="sidebar-divider lg"></span>
-            </li>
-            <li class="nav-small-cap">
-              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">Pages</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-accessible"></i>
-                  </span>
-                  <span class="hide-menu">Animation</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-user-search"></i>
-                  </span>
-                  <span class="hide-menu">Search Result</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-brand-google-photos"></i>
-                  </span>
-                  <span class="hide-menu">Gallery</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-masks-theater"></i>
-                  </span>
-                  <span class="hide-menu">Treeview</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-arrows-maximize"></i>
-                  </span>
-                  <span class="hide-menu">Block-Ui</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-sort-ascending"></i>
-                  </span>
-                  <span class="hide-menu">Session Timeout</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-currency-dollar"></i>
-                  </span>
-                  <span class="hide-menu">Pricing</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-help"></i>
-                  </span>
-                  <span class="hide-menu">FAQ</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-user-circle"></i>
-                  </span>
-                  <span class="hide-menu">Account Setting</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-app-window"></i>
-                  </span>
-                  <span class="hide-menu">Landingpage</span>
-                </div>
-
-              </a>
-            </li>
-
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-layout"></i>
-                  </span>
-                  <span class="hide-menu">Widgets</span>
-                </div>
-
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Cards</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Banner</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Charts</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Feeds</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Apps</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Data</span>
-                    </div>
-
-                  </a>
-                </li>
-              </ul>
-            </li>
-
-
-            <li>
-              <span class="sidebar-divider lg"></span>
-            </li>
-            <li class="nav-small-cap">
-              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">UI</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-buttons.html" aria-expanded="false">
-                <i class="ti ti-layers-subtract"></i>
-                <span class="hide-menu">Buttons</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-alerts.html" aria-expanded="false">
-                <i class="ti ti-alert-circle"></i>
-                <span class="hide-menu">Alerts</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-card.html" aria-expanded="false">
-                <i class="ti ti-cards"></i>
-                <span class="hide-menu">Card</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-forms.html" aria-expanded="false">
-                <i class="ti ti-file-text"></i>
-                <span class="hide-menu">Forms</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./ui-typography.html" aria-expanded="false">
-                <i class="ti ti-typography"></i>
-                <span class="hide-menu">Typography</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-layout-grid"></i>
-                  </span>
-                  <span class="hide-menu">Ui Elements</span>
-                </div>
-
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Accordian</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Badge</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Dropdowns</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Modals</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Tab</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Tooltip & Popover</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Notification</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Progressbar</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Pagination</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Bootstrap UI</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Breadcrumb</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Offcanvas</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Lists</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Grid</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Carousel</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Scrollspy</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Spinner</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Link</span>
-                    </div>
-
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-components"></i>
-                  </span>
-                  <span class="hide-menu">Components</span>
-                </div>
-
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Sweet Alert</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Nestable</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Noui slider</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Rating</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Toastr</span>
-                    </div>
-
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-cards"></i>
-                  </span>
-                  <span class="hide-menu">Cards</span>
-                </div>
-
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Basic Cards</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Custom Cards</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Weather Cards</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Draggable Cards</span>
-                    </div>
-
-                  </a>
-                </li>
-              </ul>
-            </li>
-
-            <li>
-              <span class="sidebar-divider lg"></span>
-            </li>
-            <li class="nav-small-cap">
-              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">Forms</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-file-text"></i>
-                  </span>
-                  <span class="hide-menu">Elements</span>
-                </div>
-
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Forms Input</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Input Groups</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Input Grid</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Checkbox & Radios</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Bootstrap Switch</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Select2</span>
-                    </div>
-
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-qrcode"></i>
-                  </span>
-                  <span class="hide-menu">Form Addons</span>
-                </div>
-
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Dropzone</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Form Mask</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Form Typehead</span>
-                    </div>
-
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-files"></i>
-                  </span>
-                  <span class="hide-menu">Forms Inputs</span>
-                </div>
-
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Basic Form</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Form Horizontal</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Form Actions</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Row Separator</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Form Bordered</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Form Detail</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Striped Rows</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Form Floating Input</span>
-                    </div>
-
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-alert-circle"></i>
-                  </span>
-                  <span class="hide-menu">Validation</span>
-                </div>
-
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Bootstrap Validation</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Custom Validation</span>
-                    </div>
-
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-file-pencil"></i>
-                  </span>
-                  <span class="hide-menu">Form Pickers</span>
-                </div>
-
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Colorpicker</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Rangepicker</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">BT Datepicker</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">MT Datepicker</span>
-                    </div>
-
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between has-arrow" href="javascript:void(0)" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-dna"></i>
-                  </span>
-                  <span class="hide-menu">Form Editors</span>
-                </div>
-
-              </a>
-              <ul aria-expanded="false" class="collapse first-level">
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Quill Editor</span>
-                    </div>
-
-                  </a>
-                </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link justify-content-between"
-                    href="#">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="round-16 d-flex align-items-center justify-content-center">
-                        <i class="ti ti-circle"></i>
-                      </div>
-                      <span class="hide-menu">Tinymce Edtor</span>
-                    </div>
-
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-files"></i>
-                  </span>
-                  <span class="hide-menu">Form Wizard</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-topology-star-3"></i>
-                  </span>
-                  <span class="hide-menu">Form Repeater</span>
-                </div>
-
-              </a>
-            </li>
-
-            <li>
-              <span class="sidebar-divider lg"></span>
-            </li>
-            <li class="nav-small-cap">
-              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">Bootstrap Tables</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-layout-sidebar"></i>
-                  </span>
-                  <span class="hide-menu">Basic Table</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-layout-sidebar"></i>
-                  </span>
-                  <span class="hide-menu">Dark Table</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-layout-sidebar"></i>
-                  </span>
-                  <span class="hide-menu">Sizing Table</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-layout-sidebar"></i>
-                  </span>
-                  <span class="hide-menu">Coloured Table</span>
-                </div>
-
-              </a>
-            </li>
-
-            <li>
-              <span class="sidebar-divider lg"></span>
-            </li>
-            <li class="nav-small-cap">
-              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">Datatables</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-air-conditioning-disabled"></i>
-                  </span>
-                  <span class="hide-menu">Basic</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-air-conditioning-disabled"></i>
-                  </span>
-                  <span class="hide-menu">API</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-air-conditioning-disabled"></i>
-                  </span>
-                  <span class="hide-menu">Advanced</span>
-                </div>
-
-              </a>
-            </li>
-
-            <li>
-              <span class="sidebar-divider lg"></span>
-            </li>
-            <li class="nav-small-cap">
-              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">Charts</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-chart-line"></i>
-                  </span>
-                  <span class="hide-menu">Line Chart</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-chart-area"></i>
-                  </span>
-                  <span class="hide-menu">Area Chart</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-chart-bar"></i>
-                  </span>
-                  <span class="hide-menu">Bar Chart</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-chart-bar"></i>
-                  </span>
-                  <span class="hide-menu">Pie Chart</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-chart-arcs"></i>
-                  </span>
-                  <span class="hide-menu">Radial Chart</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-chart-radar"></i>
-                  </span>
-                  <span class="hide-menu">Radar Chart</span>
-                </div>
-
-              </a>
-            </li>
-
-
-            <li>
-              <span class="sidebar-divider lg"></span>
-            </li>
-            <li class="nav-small-cap">
-              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">Auth</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./authentication-login.html" aria-expanded="false">
-                <i class="ti ti-login"></i>
-                <span class="hide-menu">Login</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-login"></i>
-                  </span>
-                  <span class="hide-menu">Side Login</span>
-                </div>
-
-              </a>
-            </li>
-
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./authentication-register.html" aria-expanded="false">
-                <i class="ti ti-user-plus"></i>
-                <span class="hide-menu">Register</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-user-plus"></i>
-                  </span>
-                  <span class="hide-menu">Side Register</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-rotate"></i>
-                  </span>
-                  <span class="hide-menu">Side Forgot Pwd</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-rotate"></i>
-                  </span>
-                  <span class="hide-menu">Boxed Forgot Pwd</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-zoom-code"></i>
-                  </span>
-                  <span class="hide-menu">Side Two Steps</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-zoom-code"></i>
-                  </span>
-                  <span class="hide-menu">Boxed Two Steps</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-alert-circle"></i>
-                  </span>
-                  <span class="hide-menu">Error</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#"
-                aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-settings"></i>
-                  </span>
-                  <span class="hide-menu">Maintenance</span>
-                </div>
-
-              </a>
-            </li>
-
-            <li>
-              <span class="sidebar-divider lg"></span>
-            </li>
-            <li class="nav-small-cap">
-              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">Extra</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link justify-content-between"
-                href="#" aria-expanded="false">
-                <div class="d-flex align-items-center gap-3">
-                  <span class="d-flex">
-                    <i class="ti ti-mood-smile"></i>
-                  </span>
-                  <span class="hide-menu">Solar Icon</span>
-                </div>
-
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./icon-tabler.html" aria-expanded="false">
-                <i class="ti ti-archive"></i>
-                <span class="hide-menu">Tabler Icon</span>
-              </a>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="./sample-page.html" aria-expanded="false">
-                <i class="ti ti-file"></i>
-                <span class="hide-menu">Sample Page</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-        <!-- End Sidebar navigation -->
-      </div>
-      <!-- End Sidebar scroll-->
-    </aside>
-    <!--  Sidebar End -->
-    <!--  Main wrapper -->
-    <div class="body-wrapper">
-      <!--  Header Start -->
-      <header class="app-header">
-        <nav class="navbar navbar-expand-lg navbar-light">
-          <ul class="navbar-nav">
-            <li class="nav-item d-block d-xl-none">
-              <a class="nav-link sidebartoggler " id="headerCollapse" href="javascript:void(0)">
-                <i class="ti ti-menu-2"></i>
-              </a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link " href="javascript:void(0)" id="drop1" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="ti ti-bell"></i>
-                <div class="notification bg-primary rounded-circle"></div>
-              </a>
-              <div class="dropdown-menu dropdown-menu-animate-up" aria-labelledby="drop1">
-                <div class="message-body">
-                  <a href="javascript:void(0)" class="dropdown-item">
-                    Item 1
-                  </a>
-                  <a href="javascript:void(0)" class="dropdown-item">
-                    Item 2
-                  </a>
-                </div>
-              </div>
-            </li>
-          </ul>
-          <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
-            <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
-
-              <li class="nav-item dropdown">
-                <a class="nav-link " href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
-                  aria-expanded="false">
-                  <img src="./assets/images/profile/user-1.jpg" alt="" width="35" height="35" class="rounded-circle">
+                <a href="{{ url('/patiens') }}" class="nav-link mb-2 {{ request()->is('patiens') ? 'active' : '' }}"
+                    style="font-size: 16px; font-weight: bold">
+                    <i class="fa-solid fa-user-plus me-1"></i>
+                    <span>Pendaftaran Pasien</span>
                 </a>
-                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
-                  <div class="message-body">
-                    <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                      <i class="ti ti-user fs-6"></i>
-                      <p class="mb-0 fs-3">My Profile</p>
-                    </a>
-                    <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                      <i class="ti ti-mail fs-6"></i>
-                      <p class="mb-0 fs-3">My Account</p>
-                    </a>
-                    <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                      <i class="ti ti-list-check fs-6"></i>
-                      <p class="mb-0 fs-3">My Task</p>
-                    </a>
-                    <a href="./authentication-login.html" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </nav>
-      </header>
-      <!--  Header End -->
+            </li>
+            <li>
+                <a href="{{ url('/antrian') }}" class="nav-link mb-2 {{ request()->is('antrian') ? 'active' : '' }}"
+                    style="font-size: 16px; font-weight: bold">
+                    <i class="fa-solid fa-users me-1"></i>
+                    <span>Antrian</span>
+                </a>
+            </li>
 
-      <div class="body-wrapper-inner">
-        <div class="container-fluid">
-          <!--  Row 1 -->
-            @yield('content')
-        </div>
-  </div>
-  <script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
-  <script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
-  <script src="{{ asset('assets/js/sidebarmenu.js') }}"></script>
-  <script src="{{ asset('assets/js/app.min.js') }}"></script>
-  <script src="{{ asset('assets/libs/apexcharts/dist/apexcharts.min.js') }}"></script>
-  <script src="{{ asset('assets/libs/simplebar/dist/simplebar.js') }}"></script>
-  <script src="{{ asset('assets/js/dashboard.js') }}"></script>
-  <!-- solar icons -->
-  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+            <li>
+                <a href="{{ route('medicalrecord.index') }}"
+                    class="nav-link mb-2 {{ request()->is('rekam-medis') ? 'active' : '' }}"
+                    style="font-size: 16px; font-weight: bold">
+                    <i class="fa-solid fa-briefcase-medical me-2"></i>
+                    <span>Rekam Medis</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link mb-2 {{ request()->is('kasir') ? 'active' : '' }}"
+                    style="font-size: 16px; font-weight: bold">
+                    <i class="fa-solid fa-money-check-alt me-2"></i>
+                    <span>Kasir</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link mb-2 {{ request()->is('observasi') ? 'active' : '' }}"
+                    style="font-size: 16px; font-weight: bold">
+                    <i class="fa-solid fa-temperature-half me-2"></i>
+                    <span>Observasi</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link mb-2 {{ request()->is('laporan ') ? 'active' : '' }}"
+                    style="font-size: 16px; font-weight: bold">
+                    <i class="fa-solid fa-file-invoice-dollar me-2"></i>
+                    <span>Laporan</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="content-wrapper d-flex flex-column">
+        <!-- Header Topbar -->
+        <header class="d-flex justify-content-end align-items-center p-3 border-bottom"
+            style="box-shadow: 5px 0 5px rgba(0, 0, 0, 0.3); background-color: #F8F8F8;">
+            <!-- Profile -->
+            <div class="dropdown">
+                <button class="btn d-flex align-items-center justify-content-between" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false"
+                    style="
+                            background-color: #f8f8f8;
+                            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+                            border: none;
+                            padding: 10px 15px;
+                            border-radius: 8px;
+                            min-width: 230px;
+                        ">
+                    <div class="d-flex align-items-center">
+                        <img src="image.png" alt="Profile" class="rounded" width="40" height="40"
+                            style="object-fit: cover" />
+                        <div class="ms-2 text-start">
+                            <div style="font-weight: bold">
+                                {{ session()->get('user_name', 'default') }}
+                            </div>
+                            <div style="font-size: 12px; color: gray">
+                                {{ session()->get('user_role_name', 'default') }}
+                            </div>
+                        </div>
+                    </div>
+                    <i class="ms-3 bi bi-caret-down-fill"></i>
+                    <!-- Bootstrap Icon -->
+                </button>
+                <ul class="dropdown-menu p-3" style="min-width: 260px; border-radius: 14px">
+                    <!-- Profil Header -->
+                    <li class="text-center mb-2">
+                        <img src="image.png" alt="Profile" width="40" height="40"
+                            style="object-fit: cover; border-radius: 6px; margin-top: 10px;" />
+                        <div
+                            style="
+                                    font-size: 15px;
+                                    font-weight: 600;
+                                    margin-top: 5px;
+                                ">
+                            {{ session()->get('user_name', 'default') }}
+                        </div>
+                        <div style="font-size: 11px; color: gray">
+                            {{ session()->get('user_role_name', 'default') }}
+                        </div>
+                    </li>
+
+                    <li>
+                        <hr class="dropdown-divider my-3" />
+                    </li>
+
+                    <!-- Menu Items -->
+                    <li>
+                        <a class="dropdown-item mt-2" href="#">
+                            <i class="fa-solid fa-user-alt me-2"></i>
+                            Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item mt-2" href="#">
+                            <i class="fa-solid fa-wrench me-2"></i> Settings
+                        </a>
+                    </li>
+                    <li>
+                        <form action="{{ route('logout') }}" method="post">
+                            @csrf
+                            @method('POST')
+                            <button type="submit" class="dropdown-item mt-2">
+                                <i class="fa-solid fa-sign-out-alt me-2"></i>
+                                Logout
+                            </button>
+                        </form>
+
+                    </li>
+                </ul>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="main-content p-5">@yield('content')</main>
+    </div>
+
+    <!-- Bootstrap 5 JS (opsional, untuk komponen interaktif) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const dropdown = document.querySelector(".dropdown");
+            const button = dropdown.querySelector("button");
+            const menu = dropdown.querySelector(".dropdown-menu");
+            const icon = button.querySelector("i");
+
+            // Pakai Bootstrap dropdown events
+            button.addEventListener("click", () => {
+                setTimeout(() => {
+                    if (menu.classList.contains("show")) {
+                        icon.classList.remove("bi-caret-down-fill");
+                        icon.classList.add("bi-caret-up-fill");
+                    } else {
+                        icon.classList.remove("bi-caret-up-fill");
+                        icon.classList.add("bi-caret-down-fill");
+                    }
+                }, 10);
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const dropdowns = document.querySelectorAll(".dropdown");
+
+            dropdowns.forEach((dropdown) => {
+                const button = dropdown.querySelector("button");
+                const icon = button.querySelector("i");
+
+                // Saat dropdown ditampilkan
+                dropdown.addEventListener("show.bs.dropdown", () => {
+                    icon.classList.remove("bi-caret-down-fill");
+                    icon.classList.add("bi-caret-up-fill");
+                });
+
+                // Saat dropdown disembunyikan
+                dropdown.addEventListener("hide.bs.dropdown", () => {
+                    icon.classList.remove("bi-caret-up-fill");
+                    icon.classList.add("bi-caret-down-fill");
+                });
+            });
+        });
+    </script>
+
+    <!-- Bootstrap Icons (opsional, jika ingin pakai icon seperti di contoh) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 </body>
 
 </html>
