@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Observation;
 use App\Models\MedicalRecord;
+use App\Models\Patiens;
 use App\Models\Queues;
 use App\Models\Ruangan;
 use App\Models\Poli;
@@ -16,20 +17,31 @@ class ObservationController extends Controller
      * Tampilkan daftar observasi.
      * GET /observation
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Pakai with() untuk eager loading relasi
+        $search = $request->get('search');
+
         $observations = Observation::with([
-                'queue.patient',
-                'ruangan',
-                'poli',
-                'observer',
-            ])
+            'queue.patient',
+            'ruangan',
+            'poli',
+            'observer',
+        ])
+
+            ->when($search, function ($q) use ($search) {
+                $q->whereHas('queue.patient', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                });
+            })
             ->orderBy('observed_at', 'desc')
             ->paginate(15);
 
-        return view('observation.index', compact('observations'));
+        // biar form tetap menampilkan kata kunci setelah submit
+        $observations->appends(['search' => $search]);
+
+        return view('observation.index', compact('observations', 'search'));
     }
+
 
     /**
      * Form untuk membuat observasi baru.
@@ -39,15 +51,16 @@ class ObservationController extends Controller
     {
         $medicalRecords = MedicalRecord::orderBy('recorded_at', 'desc')->get();
         // Hanya antrian yang masih menunggu (status = "menunggu")
-        $queues         = Queues::with('patient')->where('status', 'menunggu')->get();
+
+        $patients = Patiens::orderBy('nama')->get();
         $ruangans       = Ruangan::orderBy('nama')->get();
         $polis          = Poli::orderBy('nama')->get();
 
         return view('observation.create', compact(
             'medicalRecords',
-            'queues',
             'ruangans',
-            'polis'
+            'polis',
+            'patients'
         ));
     }
 
@@ -58,8 +71,9 @@ class ObservationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'medical_record_id'         => ['required', 'exists:medical_records,id'],
-            'queue_id'                  => ['nullable', 'exists:queues,id'],
+            'medical_record_id'         => ['nullable', 'exists:medical_records,id'],
+            'patiens_id'                => ['nullable', 'exists:patiens,id'],
+
             'ruangan_id'                => ['required', 'exists:ruangans,id'],
             'poli_id'                   => ['nullable', 'exists:polis,id'],
             'observed_at'               => ['nullable', 'date'],

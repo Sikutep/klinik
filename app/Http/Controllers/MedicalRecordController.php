@@ -50,11 +50,11 @@ class MedicalRecordController extends Controller
     public function create()
     {
         $patients = Queues::select('queues.*')
-        ->join('patiens', 'queues.patient_id', '=', 'patiens.id')
-        ->whereIn('queues.status', ['dipanggil', 'selesai'])
-        ->orderBy('patiens.nama')
-        ->with('patient')
-        ->get();
+            ->join('patiens', 'queues.patient_id', '=', 'patiens.id')
+            ->whereIn('queues.status', ['dipanggil', 'selesai'])
+            ->orderBy('patiens.nama')
+            ->with('patient')
+            ->get();
 
         $doctors   = Users::whereIn('role_id', [3, 4])->orderBy('nama')->get();
         $obats     = Obat::orderBy('nama')->get();
@@ -266,6 +266,7 @@ class MedicalRecordController extends Controller
         // === 2) Simpan baris Observasi (snapshot Objective awal) ===
         Observation::create([
             'medical_record_id' => $mr->id,
+            'queue_id'          => $data['queue_id'] ?? null,         // ← baru ditambahkan
             'observed_at'       => $mr->recorded_at,
             'suhu'              => $data['suhu_tubuh'] ?? null,
             'tekanan_darah'     => $data['tekanan_darah'] ?? null,
@@ -354,7 +355,7 @@ class MedicalRecordController extends Controller
     /**
      * Update the specified medical record in storage.
      */
-     public function update(Request $request, MedicalRecord $medicalrecord)
+    public function update(Request $request, MedicalRecord $medicalrecord)
     {
         // 1) Filter baris resep yang kosong atau setengah terisi
         $all = $request->all();

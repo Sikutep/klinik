@@ -404,14 +404,14 @@
             </a>
 
             <li>
-                <a href="{{ url('/patiens') }}" class="nav-link mb-2 {{ request()->is('patiens') ? 'active' : '' }}"
+                <a href="{{ url('/patiens') }}" class="nav-link mb-2 {{ request()->routeIs('patiens.*') ? 'active' : '' }}"
                     style="font-size: 16px; font-weight: bold">
                     <i class="fa-solid fa-user-plus me-1"></i>
                     <span>Pendaftaran Pasien</span>
                 </a>
             </li>
             <li>
-                <a href="{{ url('/antrian') }}" class="nav-link mb-2 {{ request()->is('antrian') ? 'active' : '' }}"
+                <a href="{{ url('/antrian') }}" class="nav-link mb-2 {{ request()->routeIs('antrian.*') ? 'active' : '' }}"
                     style="font-size: 16px; font-weight: bold">
                     <i class="fa-solid fa-users me-1"></i>
                     <span>Antrian</span>
@@ -420,21 +420,21 @@
 
             <li>
                 <a href="{{ route('medicalrecord.index') }}"
-                    class="nav-link mb-2 {{ request()->is('rekam-medis') ? 'active' : '' }}"
+                    class="nav-link mb-2 {{ request()->routeIs('medicalrecord.*') ? 'active' : '' }}"
                     style="font-size: 16px; font-weight: bold">
                     <i class="fa-solid fa-briefcase-medical me-2"></i>
                     <span>Rekam Medis</span>
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link mb-2 {{ request()->is('kasir') ? 'active' : '' }}"
+                <a href="{{ route('cashier.index') }}" class="nav-link mb-2 {{ request()->routeIs('cashier.*') ? 'active' : '' }}"
                     style="font-size: 16px; font-weight: bold">
                     <i class="fa-solid fa-money-check-alt me-2"></i>
                     <span>Kasir</span>
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link mb-2 {{ request()->is('observasi') ? 'active' : '' }}"
+                <a href="{{ route('observation.index') }}" class="nav-link mb-2 {{ request()->routeIs('observation.*') ? 'active' : '' }}"
                     style="font-size: 16px; font-weight: bold">
                     <i class="fa-solid fa-temperature-half me-2"></i>
                     <span>Observasi</span>

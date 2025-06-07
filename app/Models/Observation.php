@@ -9,6 +9,7 @@ class Observation extends Model
      protected $fillable = [
         'medical_record_id',
         'poli_id',
+        'patiens_id',
         'observed_at',
         'suhu',
         'tekanan_darah',
@@ -36,7 +37,7 @@ class Observation extends Model
         'attachment_photo',
         'catatan',
         'ruangan_id',
-        'queue_id',
+
         'observer_id',
         'created_by',
         'updated_by'

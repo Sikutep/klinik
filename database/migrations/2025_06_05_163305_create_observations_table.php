@@ -28,6 +28,12 @@ return new class extends Migration
                   ->on('polis')
                   ->onDelete('set null');
 
+            $table->unsignedBigInteger('patiens_id')->nullable();
+            $table->foreign('patiens_id')
+                ->references('id')
+                ->on('patiens')
+                ->onDelete('set null');
+
             // Waktu pencatatan observasi
             $table->timestamp('observed_at')->comment('Waktu observasi');
 
@@ -131,12 +137,7 @@ return new class extends Migration
                   ->on('ruangans')
                   ->onDelete('set null');
 
-            // Jika ingin kaitkan ke queue (antrian) tertentu
-            $table->unsignedBigInteger('queue_id')->nullable();
-            $table->foreign('queue_id')
-                  ->references('id')
-                  ->on('queues')
-                  ->onDelete('set null');
+
 
             // ID user/perawat/dokter yang mencatat
             $table->unsignedBigInteger('observer_id')->nullable();

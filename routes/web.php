@@ -58,4 +58,4 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/cashier', function () {
     return view('kasir.index');
-});
+})->name('cashier.index');
